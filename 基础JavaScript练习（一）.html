@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>基础JavaScript练习（一）</title>
+	<style>
+		body {
+			color: #fff;
+			background-color: #666;
+		}
+		.arrayList{
+			width: 800px;
+			height: 300px;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin-left: -400px;
+			margin-top: -150px;
+			border:1px solid red;
+		}
+		ul>li{
+			display: inline-block;
+			list-style: none;
+			margin: 0 1%;
+			padding: .4% 1%;
+			border:1px solid green;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="input-with-button">
+		<input id="input" type="text" name="input" value="" autofocus="autofocus" placeholder="请输入数字">
+		<button type="button" id="leftEnter">左侧入</button>
+		<button type="button" id="leftOut">左侧出</button>
+		<button type="button" id="rightEnter">右侧入</button>
+		<button type="button" id="rightOut">右侧出</button>
+	</div>
+	<div class="arrayList">
+		<ul id="showList">
+		</ul>
+	</div>
+	<script type="text/javascript">
+		/* 
+		2017-12-12 09:53:47
+		1、模拟一个队列，队列的每个元素是一个数字，初始队列为空
+	    2、有一个input输入框，以及4个操作按钮
+	        点击"左侧入"，将input中输入的数字从左侧插入队列中；
+	        点击"右侧入"，将input中输入的数字从右侧插入队列中；
+	        点击"左侧出"，读取并删除队列左侧第一个元素，并弹窗显示元素中数值；
+					点击"右侧出"，读取并删除队列又侧第一个元素，并弹窗显示元素中数值；
+	    3、点击队列中任何一个元素，则该元素会被从队列中删除
+		*/
+		{
+			// 新建一个空数组，存放添加的数据
+			let arrayList = [];
+
+			// 封装快捷获取元素的方法,这算单例模式？
+			let getElement = {
+				ById (attr) {
+					return document.querySelector(attr);
+				},
+				ByTagName (attr) {
+					return document.querySelectorAll(attr);
+				}
+			}
+
+			let input = getElement.ById('#input');
+			let buttonLists = getElement.ByTagName('button');
+			let showList = getElement.ById('#showList');
+
+			// 点击队列中任何一个元素，则该元素会被从队列中删除
+			// 利用事件冒泡机制
+			showList.addEventListener('click',function(event){
+				console.log(event.target.innerHTML)
+				this.removeChild(event.target);
+				document.querySelector("#input").focus();
+			},false)
+
+			// 给每个按钮增加事件监听
+			for (let i = 0; i < buttonLists.length; i++) {
+				buttonLists[i].addEventListener('click', function (event) {
+					// 向数组列表添加数据，（点击按键，被添加的数组，要添加的数据）
+					editArrayList(this,event, arrayList, input.value);
+					// 将数组渲染到指定DOM节点中，（指定的DOM节点，要添加的数组）
+					arrayInnerHTML("#showList",arrayList);
+					// 点击后清空value值
+					input.value = '';
+					// 点击完后重新获取焦点
+					addAutofocus("#input")
+				}, false)
+			}
+			// 删除这个点击的按钮
+
+			// 点击按钮，根据id值操作进入列表
+			let editArrayList = function (_this,event, attr, val) {
+				switch (_this.id) {
+					case "leftEnter":
+						if (val.length) {attr.unshift(val);}
+						break;
+					case "leftOut":
+						alert(attr.shift())
+						break;
+					case "rightEnter":
+						if (val.length) {attr.push(val);}
+						break;
+					case "rightOut":
+						alert(attr.pop())
+						break;
+				}
+			}
+
+			// 把arrayList添加进DOM列表
+			let arrayInnerHTML = function (attr, array) {
+				let showList = '';
+				for (let i = 0; i < arrayList.length; i++) {
+					showList += ('<li>'+ arrayList[i] +'</li>');
+				}
+				getElement.ById(attr).innerHTML = showList
+
+			}
+
+			// 添加autoFocus
+			let addAutofocus = function (attr) {
+				getElement.ById(attr).focus()
+			}
+		}
+
+
+		/*
+		为何会这样？
+		 */
+		(function(){
+			
+		})()
+
+	</script>
+</body>
+
+</html>

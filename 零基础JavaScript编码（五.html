@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>零基础JavaScript编码（五</title>
+  <style>
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+    }
+    /* HTML5 display-role reset for older browsers */
+
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+      display: block;
+    }
+
+    body {
+      line-height: 1;
+    }
+
+    ol,
+    ul {
+      list-style: none;
+    }
+
+    blockquote,
+    q {
+      quotes: none;
+    }
+
+    blockquote:before,
+    blockquote:after,
+    q:before,
+    q:after {
+      content: '';
+      content: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    body {
+      color: aliceblue;
+      background-color: #666;
+    }
+
+    .aqi-chart-wrap {
+      /* width: 1024px;
+      height: 500px;
+      text-align: center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin-left: -512px;
+      margin-top: -14%; */
+      margin: 20px 15%;
+      height: 650px;
+      border: 1px solid #A3A3A3;
+      background-color: #EBEBEB;
+      border-radius: 10px;
+      box-shadow: 2px 2px 2px #CDC9C9;
+      position: relative;
+      padding: 0px 10px;
+      overflow: scroll;
+      overflow-y: hidden;
+    }
+
+    #aqi-show-wrap {
+      width: 960px;
+      position: absolute;
+      height: auto;
+      margin: 0 auto;
+      bottom: 0px;
+      overflow: visible;
+    }
+
+    #aqi-show-wrap>li {
+      display: inline-block;
+      color: #000;
+      background-color: #000;
+      width: 8px;
+      font-size: .3rem;
+      text-align: center;
+      margin: 0 1px;
+      list-style: none;
+    }
+
+    .transparence{
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+  <fieldset id="form-gra-time">
+    <legend>请选择日期粒度：</legend>
+    <label>日
+      <input name="gra-time" value="day" type="radio" checked="checked">
+    </label>
+    <label>周
+      <input name="gra-time" value="week" type="radio">
+    </label>
+    <label>月
+      <input name="gra-time" value="month" type="radio">
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>请选择查看的城市：</legend>
+    <select id="city-select">
+      <!-- <option>北京</option> -->
+    </select>
+  </fieldset>
+
+  <div class="aqi-chart-wrap">
+    <ul id="aqi-show-wrap">
+
+    </ul>
+  </div>
+</body>
+
+<script>
+  /* 数据格式演示
+          var aqiSourceData = {
+            "北京": {
+              "2016-01-01": 10,
+              "2016-01-02": 10,
+              "2016-01-03": 10,
+              "2016-01-04": 10
+            }
+          };
+          */
+
+  // 以下两个函数用于随机模拟生成测试数据
+  function getDateStr(dat) {
+    var y = dat.getFullYear(); //yeah
+    var m = dat.getMonth() + 1; //month
+    m = m < 10 ? '0' + m : m; //转换为两位     
+    var d = dat.getDate(); //day
+    d = d < 10 ? '0' + d : d; //转换为两位
+    return y + '-' + m + '-' + d;
+  }
+
+  function randomBuildData(seed) {
+    var Data = {};
+    var dat = new Date("2016-01-01");
+    var datStr = ''
+    for (var i = 1; i < 92; i++) {
+      datStr = getDateStr(dat);
+      color = Data[datStr] = Math.ceil(Math.random() * seed);
+      dat.setDate(dat.getDate() + 1);
+    }
+    return Data;
+  }
+
+  var aqiSourceData = {
+    "北京": randomBuildData(500),
+    "上海": randomBuildData(300),
+    "广州": randomBuildData(200),
+    "深圳": randomBuildData(100),
+    "成都": randomBuildData(300),
+    "西安": randomBuildData(500),
+    "福州": randomBuildData(100),
+    "厦门": randomBuildData(100),
+    "沈阳": randomBuildData(500)
+  };
+
+  // 用于渲染图表的数据
+  var chartData = {
+    opt: {
+      city: "",
+      time: ""
+    },
+    data: {},
+    temp: {}
+  };
+
+  // 记录当前页面的表单选项
+  var pageState = {
+    nowSelectCity: "北京",
+    nowGraTime: "day"
+  }
+
+  /**
+   * 渲染图表
+   */
+  function renderChart() {
+    var aqi_show_wrap = document.getElementById("aqi-show-wrap"),
+      aqi_show_li = aqi_show_wrap.getElementsByTagName("li");
+    /* 
+    1、遍历chartData中的数据，并写入DOM
+     */
+
+    // 每次刷新先清空原有的数据，防止被添加
+    aqi_show_wrap.innerHTML = null;
+    // 创建一个文档碎片，用于存放需要innerHTML的数据
+    var aqi_data = document.createDocumentFragment();
+    for (const key in chartData.data) {
+      var li = document.createElement('li'),
+          height = chartData.data[key];
+      li.style.height = height + 'px';
+      li.title = key + "的污染指数是：" + chartData.data[key];
+      li.style.backgroundColor = setShowListsColor(height);
+      aqi_data.appendChild(li)
+    }
+    aqi_show_wrap.appendChild(aqi_data);
+    aqi_data = null;
+   
+  //  console.log(chartData.data)
+    
+    if (chartData.opt.time === 'day') {
+
+    }
+
+    if (chartData.opt.time === 'month') {
+      
+    }
+    // 根据不同高度设置颜色
+    function setShowListsColor(height) {
+      if (height >= 0 && height <= 50)
+        return "#00e41a";
+      if (height > 50 && height <= 100)
+        return "#fefe1f";
+      if (height > 100 && height <= 150)
+        return "#ff7b0a";
+      if (height > 150 && height <= 200)
+        return "#ff0301";
+      if (height > 200 && height <= 300)
+        return "#9a044b";
+      if (height > 300 && height <= 500)
+        return "#460215";
+    }
+
+    // 移入移出效果
+    function toggerMessage(event, fn) {
+      aqi_show_wrap.addEventListener(event, fn, false)
+    }
+    toggerMessage('mouseover',function (event) {
+      if (event.target.tagName == 'LI') {
+        event.target.style.opacity = 0.5;
+      }
+    });
+    toggerMessage('mouseout', function (event) {
+      if (event.target.tagName == 'LI') {
+        event.target.style.opacity = 1;
+      }
+    });
+  }
+  /**
+   * 日、周、月的radio事件点击时的处理函数
+   */
+  function graTimeChange(nowTimeVal) {
+    // 确定是否选项发生了变化 
+
+    // 设置对应数据
+
+    // 调用图表渲染函数
+
+    pageState.nowGraTime = nowTimeVal;
+    initAqiChartData();
+    renderChart();
+  }
+
+  /**
+   * select发生变化时的处理函数
+   */
+  function citySelectChange(selectCityVal) {
+    // 确定是否选项发生了变化 
+
+    // 设置对应数据
+
+    // 调用图表渲染函数
+
+    pageState.nowSelectCity = selectCityVal;
+    initAqiChartData();
+    renderChart();
+  }
+
+  /**
+   * 初始化日、周、月的radio事件，当点击时，调用函数graTimeChange
+   */
+  function initGraTimeForm() {
+    var form_gra_time = document.getElementById("form-gra-time");
+    form_gra_time.addEventListener("change", function (event) {
+      graTimeChange(event.target.value);
+    }, false)
+  }
+
+  /**
+   * 初始化城市Select下拉选择框中的选项
+   */
+  function initCitySelector() {
+    // 读取aqiSourceData中的城市，然后设置id为city-select的下拉列表中的选项
+
+    // 给select设置事件，当选项发生变化时调用函数citySelectChange
+
+    /* 
+    1、获取#city-select的DOM节点
+    2、获取aqiSourceData的city列表
+    3、把数据循环写入#city-select中
+     */
+    var city_select = document.getElementById("city-select");
+    var city_select_options = "";
+    for (var city in aqiSourceData) {
+      if (aqiSourceData.hasOwnProperty(city)) {
+        city_select_options += '<option>' + city + '</option>'
+      }
+    }
+    city_select.innerHTML = city_select_options;
+    /* 
+    给每个city_select设置事件委托，当select改变时触发
+     */
+    city_select.addEventListener("change", function (event) {
+      citySelectChange(event.target.value)
+    }, false)
+  }
+
+  /**
+   * 初始化图表需要的数据格式
+   */
+  function initAqiChartData() {
+    // 将原始的源数据处理成图表需要的数据格式
+    // 处理好的数据存到 chartData 中
+
+    /* 
+    1、默认是北京
+    2、直接输出
+    3、处理好、日、周、月、
+     */
+    if (pageState.nowGraTime === 'day') {
+      nowTimeIsDay();
+    } else if (pageState.nowGraTime === 'week') {
+      nowTimeIsWeek();
+    } else if (pageState.nowGraTime === 'month') {
+      nowTimeIsMonth();
+    }
+    /* 日处理函数 */
+    function nowTimeIsDay() {
+      for (var key in aqiSourceData) {
+        if (key == pageState.nowSelectCity) {
+          chartData.opt.city = key;
+          chartData.opt.time = pageState.nowGraTime;
+          chartData.data = aqiSourceData[key];
+        }
+      }
+    }
+    /* 周处理函数 */
+    function nowTimeIsWeek() {
+      /* 
+      获取数据
+      处理数据，渲染成渲染的内容
+      写入数据
+       */
+      var week_aqi_data = {},
+          peaper_aqi_data = null;
+      // 准备需要处理的数据
+      function pepareWeekData() {
+        var week_temp_data = {}; //临时存储数据的对象
+        for (var city in aqiSourceData) {
+          if (city == pageState.nowSelectCity) {
+            week_temp_data = aqiSourceData[city];
+          }
+        }
+        return week_temp_data; //返回临时对象 
+      }
+      peaper_aqi_data  = pepareWeekData()
+      // 处理准备好的数据：天数：污染指数总数
+      function prepareEveryWeekAqiData() {
+        var week_avg_data = {},
+
+            week_avg_data_day = [],
+            week_avg_data_sum = [];
+
+        var day_length = 0,
+            aqi_sum_data = 0;
+        for (const key in peaper_aqi_data) {
+          var weekday = new Date(key).getDay();
+          var aqi_data = peaper_aqi_data[key];
+
+          day_length ++;
+          aqi_sum_data += aqi_data;    
+          if (weekday == 0) {
+            week_avg_data[day_length] = aqi_sum_data;
+
+            week_avg_data_day.push(day_length);
+            week_avg_data_sum.push(aqi_sum_data);
+
+            day_length = 0;
+            aqi_sum_data = 0;
+            continue 
+          }
+        }
+        console.log(week_avg_data);
+        console.log(week_avg_data_day);
+        console.log(week_avg_data_sum);
+      }
+      prepareEveryWeekAqiData()
+      // console.log(weekday)
+    }
+    /* 月处理函数 */
+    function nowTimeIsMonth() {
+      everyMonthAvgValue = {}; //初始化图表数据
+      /*
+       *准备临时储存数据对象的函数
+       */
+      function prepareMonthData(){
+        var monthData = {}; //临时存储数据的对象
+        for (var city in aqiSourceData) {
+          if (city == pageState.nowSelectCity) {
+            monthData = aqiSourceData[city];
+          }
+        }
+        return monthData; //返回临时对象
+      }
+
+      var monthData = prepareMonthData.call();
+
+      /* 
+       *准备每个月的污染总数
+       */
+      function prepareEveryMonthAqiData() {
+        /* 
+        存放处理好的数据：
+          var data = {
+            31: 2344;
+            29: 5433;
+            31: 2234;
+          }
+         */
+        var data = {};
+        // 存储临时数据，每月天数与每月污染值总数
+        var countAqiLength = 0,
+            countAqiValue = 0;
+        var aqiMonthLength = [],
+            aqiMonthValue = [];
+        // 用ES5语法，枚举monthData中可遍历的属性（既当前日期,2016-01-01），返回为一个数组
+        var tempMonthArray = Object.keys(monthData);
+        for (let i = 0; i < tempMonthArray.length; i++) {
+          // 月份天数添加，并为当月aqi指数赋值
+          countAqiLength++;
+          countAqiValue += monthData[tempMonthArray[i]]
+          // 当前月份和下个月做对比，如果不等于0则说明月份有所改变
+          var curMonthDate = new Date(Date.parse(tempMonthArray[i])).getMonth(),
+              nexMonthDate = new Date(Date.parse(tempMonthArray[i + 1])).getMonth();
+          if (curMonthDate - nexMonthDate != 0) {
+            aqiMonthLength.push(countAqiLength);
+            aqiMonthValue.push(countAqiValue);
+
+            // 重置临时数据
+            countAqiLength = 0;
+            countAqiValue = 0;
+            continue
+          }
+        }
+        
+        /* 
+        for (let i = 0; i < aqiMonthLength.length; i++) {
+          console.log(aqiMonthLength[i], aqiMonthValue[i]);
+          data[aqiMonthLength[i]] = aqiMonthValue[i];
+        }
+        */
+        return [aqiMonthLength,aqiMonthValue];
+      }
+
+      /* 
+       * 计算每月平均数
+       */
+      function avgEveryMonthAqi() {
+        var everyMonthLength = prepareEveryMonthAqiData()[0],
+            aqiValueDate = prepareEveryMonthAqiData()[1];
+        var tempArray = [];
+        for (let i = 0; i < everyMonthLength.length; i++) {
+          var curTemp = 0;
+          curTemp = Math.round(aqiValueDate[i]/everyMonthLength[i]);
+          tempArray.push(curTemp)
+        }
+        return tempArray;
+      }
+
+
+      var avgEveryMonthAqi = avgEveryMonthAqi();
+      for (let i = 0; i < avgEveryMonthAqi.length; i++) {
+        everyMonthAvgValue[i] = avgEveryMonthAqi[i];
+      }
+
+      chartData.opt.time = pageState.nowGraTime;
+      chartData.data = avgEveryMonthAqi;
+    }
+
+
+  }
+
+  /**
+   * 初始化函数
+   */
+  function init() {
+    initGraTimeForm();
+    initCitySelector();
+    initAqiChartData();
+    renderChart();
+  }
+
+  init();
+</script>
+
+</html>
