@@ -9,7 +9,8 @@
 			color: #fff;
 			background-color: #666;
 		}
-		.arrayList{
+
+		.arrayList {
 			width: 800px;
 			height: 300px;
 			position: absolute;
@@ -17,21 +18,21 @@
 			top: 50%;
 			margin-left: -400px;
 			margin-top: -150px;
-			border:1px solid red;
+			border: 1px solid #f1f1f1;
 		}
-		#showList{
-			width: 100%;
 
-			position: absolute;
-			left: 0;
-			bottom: 0;
+		#showList {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			align-items:flex-end;
+			justify-content: space-around;
 		}
-		ul>li{
-			display: inline-block;
+
+		ul>li {
 			list-style: none;
-			/* margin: 0 1%; */
 			padding: .4% 1%;
-			border:1px solid green;
+			border: 1px solid green;
 			background-color: #fff;
 			cursor: pointer;
 		}
@@ -40,21 +41,14 @@
 
 <body>
 	<div class="input-with-button">
-		<input 
-			id="input"
-			type="number"
-			name="input" 
-			value="" 
-			autofocus="autofocus" 
-			placeholder="请输入数字"
-			min="10"
-			max="100" 
-		>
+		<input id="input" type="number" name="input" value="" autofocus="autofocus" placeholder="请输入数字" min="10" max="100">
 		<button type="button" id="leftEnter">左侧入</button>
 		<button type="button" id="leftOut">左侧出</button>
 		<button type="button" id="rightEnter">右侧入</button>
 		<button type="button" id="rightOut">右侧出</button>
-		<button type="button" id="sortButton">排序</button>
+		<button type="button" id="sortButton">排序数组</button>
+		<button type="button" id="randButton">打乱数组</button>
+		<button type="button" id="norepeatButton">数组去重</button>
 	</div>
 	<div class="arrayList">
 		<ul id="showList">
@@ -71,62 +65,118 @@
 		*/
 		{
 			// 新建一个空数组，存放添加的数据
-			let arrayList = [12,32,43,54,23, 12, 32, 43, 54, 23, 12, 32, 43, 54, 23];
+			let arrayList = [99, 43, 65, 78, 35, 43, 87, 57, 14, 65, 98, 56, 32, 12, 32, 43, 54, 23, 12, 32, 43, 54, 23, 12, 32,
+				43, 54, 23
+			];
 
 			// 封装快捷获取元素的方法,这算单例模式？
-			let getElement = {
-				ById (attr) {
+			const getElement = {
+				ById(attr) {
 					return document.querySelector(attr);
 				},
-				ByTagName (attr) {
+				ByTagName(attr) {
 					return document.querySelectorAll(attr);
 				}
 			}
 
-			let input = getElement.ById('#input');
-			let buttonLists = getElement.ByTagName('button');
-			let showList = getElement.ById('#showList');
-			let wrap = document.getElementsByClassName('input-with-button')[0];
-			
-			// 数组排序
-			let arraySort = function (array) {
-				if (!Array.isArray(array)) {
-					alert("请传入参数为数组");
-					return;
-				}
-				/* 冒泡排序 */
-				console.log(array)
-				arrayInnerHTML("#showList", arrayList);				
-			}
+			const input = getElement.ById('#input');
+			const buttonLists = getElement.ByTagName('button');
+			const showList = getElement.ById('#showList');
+			const wrap = document.getElementsByClassName('input-with-button')[0];
 
 			// 给每个按钮增加事件监听
-			wrap.addEventListener('click',function(event){
+			wrap.addEventListener('click', function (event) {
 				var trg = event.target;
 				if (trg.nodeName === 'BUTTON') {
 					if (trg.id === 'sortButton') {
 						arraySort(arrayList);
-						return						
+						return;
+					}
+
+					if (trg.id === 'randButton') {
+						randSort(arrayList);
+						return;
+					}
+
+					if (trg.id === 'norepeatButton') {
+						norepeatArray(arrayList);
+						return;
 					}
 					// 队列元素数量最多限制为60个，当超过60个时，添加元素时alert出提示
 					if (arrayList.length > 60) {
 						alert('请限元素数量在60以内！');
 						input.value = '';
-						addAutofocus("#input");						
+						addAutofocus("#input");
 						return;
 					}
 					// 向数组列表添加数据，（点击按键，被添加的数组，要添加的数据）
 					editArrayList(trg, arrayList);
 					// 将数组渲染到指定DOM节点中，（指定的DOM节点，要添加的数组）
-					arrayInnerHTML("#showList",arrayList);
+					arrayInnerHTML("#showList", arrayList);
 					// 点击后清空value值
 					input.value = '';
 					// 点击完后重新获取焦点
 					addAutofocus("#input");
 				}
-			},false);
+			}, false);
+			
+			// 数组排序
+			const arraySort = function (array) {
+				if (!Array.isArray(array)) {
+					alert("请传入参数为数组");
+					return;
+				}
+
+				/* 冒泡排序 */
+				var Clock;
+				var count = 0,
+					i = 0;
+				console.log(array.length)
+				Clock = setInterval(function () {
+					if (count >= array.length) {
+						clearInterval(Clock);
+					}
+					if (i == array.length - 1 - count) {
+						i = 0;
+						count++;
+					}
+					if (array[i] > array[i + 1]) {
+						var temp = array[i];
+						array[i] = array[i + 1];
+						array[i + 1] = temp;
+						arrayInnerHTML("#showList", array);
+					}
+					i++;
+				}, 50);
+			}
+
+			// 打乱数组
+			const randSort = function (array) {
+				arrayList = array.sort(function () {
+					return (0.5 - Math.random());
+				});
+				arrayInnerHTML("#showList", arrayList);
+
+			}
+
+			// 数组去重
+			const norepeatArray = function (array) {
+				// 使用ES6
+				// let newArr = Array.from(new Set(array));
+
+				// indexOf
+				let res = [];
+				for (let index = 0; index < array.length; index++) {
+					if (res.indexOf(array[index]) == -1) {
+						res.push(array[index]);
+					}
+				}
+
+				console.log(res)
+			}
 
 			// 限制输入的数字在10-100
-			let minNumAndmaxNum = function (min, max) {
+			const minNumAndmaxNum = function (min, max) {
 				var attrNumber = input.value;
 				if (attrNumber < min || attrNumber > max) {
 					alert('请输入10——100之间的数字');
@@ -138,17 +188,17 @@
 			}
 
 			// 点击按钮，根据id值操作进入列表
-			let editArrayList = function (_this, attr) {
+			const editArrayList = function (_this, attr) {
 				switch (_this.id) {
 					case "leftEnter":
-						var val = minNumAndmaxNum(10, 100);	
+						var val = minNumAndmaxNum(10, 100);
 						attr.unshift(val);
 						break;
 					case "leftOut":
 						alert(attr.shift());
 						break;
 					case "rightEnter":
-						var val = minNumAndmaxNum(10, 100);	
+						var val = minNumAndmaxNum(10, 100);
 						attr.push(val);
 						break;
 					case "rightOut":
@@ -158,7 +208,7 @@
 			}
 
 			// 把arrayList添加进DOM列表
-			let arrayInnerHTML = function (attr, array) {
+			const arrayInnerHTML = function (attr, array) {
 				let showList = '';
 				for (let i = 0, len = array.length; i < len; i++) {
 					showList += `<li style="height: ${array[i]}px;" title="${array[i]}"></li>`;
@@ -167,9 +217,10 @@
 			}
 
 			// 添加autoFocus
-			let addAutofocus = function (attr) {
+			const addAutofocus = function (attr) {
 				getElement.ById(attr).focus()
 			}
+
 		};
 	</script>
 </body>
