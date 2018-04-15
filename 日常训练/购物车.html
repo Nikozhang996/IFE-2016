@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>购物车</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            color: #ffffff;
+            background-color: #666666;
+        }
+
+        .main-seation {
+            width: 800px;
+            height: 600px;
+            color: #666666;
+            background-color: #fff;
+            border-radius: 20px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -400px;
+            margin-top: -300px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        .table-head-nav {
+            display: table-row;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="main-seation">
+        <table>
+            <thead class="table-head">
+                <caption>购物车</caption>
+                <tr class="table-head-nav">
+                    <th>全选
+                        <input type="checkbox" id="checkAllBtn">
+                    </th>
+                    <td>商品</td>
+                    <td>单价</td>
+                    <td>数量</td>
+                    <td>小计</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody class="table-content" id="table-content">
+                <tr class="table-contnet-li">
+                    <td>
+                        <input type="checkbox" class="select-this-btn" data-select="checked">
+                    </td>
+                    <td class="table-content-title">Javascript忍者秘籍</td>
+                    <td class="table-content-univalence" data-select="price">99</td>
+                    <td>
+                        <input type="number" value="1" class="table-content-count" data-select="count">
+                    </td>
+                    <td class="table-content-total" data-select="total">99</td>
+                    <td>
+                        <button class="delete-this-btn">删除</button>
+                    </td>
+                </tr>
+
+                <tr class="table-contnet-li">
+                    <td>
+                        <input type="checkbox" class="select-this-btn" data-select="checked">
+                    </td>
+                    <td class="table-content-title">Javascript高性能</td>
+                    <td class="table-content-univalence" data-select="price">100</td>
+                    <td>
+                        <input type="number" value="1" class="table-content-count" data-select="count">
+                    </td>
+                    <td class="table-content-total" data-select="total">100</td>
+                    <td>
+                        <button class="delete-this-btn">删除</button>
+                    </td>
+                </tr>
+
+                <tr class="table-contnet-li">
+                    <td>
+                        <input type="checkbox" class="select-this-btn" data-select="checked">
+                    </td>
+                    <td class="table-content-title">Javascrip设计模式</td>
+                    <td class="table-content-univalence" data-select="price">66</td>
+                    <td>
+                        <input type="number" value="1" class="table-content-count" data-select="count">
+                    </td>
+                    <td class="table-content-total" data-select="total">66</td>
+                    <td>
+                        <button class="delete-this-btn">删除</button>
+                    </td>
+                </tr>
+
+                <tr class="table-contnet-li">
+                    <td>
+                        <input type="checkbox" class="select-this-btn" data-select="checked">
+                    </td>
+                    <td class="table-content-title">Javascript高级程序设计</td>
+                    <td class="table-content-univalence" data-select="price">50</td>
+                    <td>
+                        <input type="number" value="2" class="table-content-count" data-select="count">
+                    </td>
+                    <td class="table-content-total" data-select="total">50</td>
+                    <td>
+                        <button class="delete-this-btn">删除</button>
+                    </td>
+                </tr>
+
+
+
+            </tbody>
+            <tfoot class="table-foot">
+                <tr>
+                    <td colspan="6">总价：
+                        <span id="table-price-total">0</span>
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </main>
+
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.slim.min.js"></script>
+    <script>
+        const $checkAllBtn = $('#checkAllBtn'),
+            $table_content = $('#table-content'),
+            $price_total = $('#table-price-total'),
+            $shop_checkbox = $('.select-this-btn')
+
+
+        // 获取所有商品状态
+        function getStatus() {
+            let $shop_checkbox = $('.select-this-btn'),
+                $shop_univalence = $('.table-content-univalence'),
+                $shop_count = $('.table-content-count');
+
+            let all_status = [];
+
+            let checkbox_status = [],
+                univalence_statis = [],
+                count_statis = [];
+
+            // 获取所有商品列表的状态信息，封装为一个对象并添加到all_status中
+            for (let i = 0; i < $shop_checkbox.length; i++) {
+                let current_shop = {};
+
+                current_shop.checked = $shop_checkbox[i].checked;
+                current_shop.univalence = $shop_univalence[i].innerHTML;
+                current_shop.count = $shop_count[i].value;
+                current_shop.price = $shop_univalence[i].innerHTML * $shop_count[i].value;
+
+                all_status.push(current_shop);
+
+                // 
+                current_shop = null;
+            };
+
+            return all_status;
+        }
+
+        // 计算总价方法
+        function getTotalPrices() {
+            let status = getStatus();
+            let price_total = 0;
+
+            status.forEach(element => {
+                if (element.checked) {
+                    price_total += element.price;
+                }
+            });
+
+            $price_total.html(price_total);
+        }
+
+        // 设置全选状态
+        function setCheckedAllStatus() {
+            // $shop_checkbox为类数组，需要转换为数组才能使用every方法
+            $checkAllBtn[0].checked = Array.from($shop_checkbox).every(value => value.checked);
+        }
+
+        // 修改商品数里方法
+        function name(params) {
+
+        }
+
+        /**************************************************/
+
+        // 全选所有商品列表方法
+        $checkAllBtn.on('change', function (ev) {
+            if (this.checked) {
+                $shop_checkbox.each(function (index, item) {
+                    item.checked = true;
+                })
+            } else {
+                $shop_checkbox.each(function (index, item) {
+                    item.checked = false;
+                })
+            }
+            getTotalPrices();
+        });
+
+        // 修改商品数量方法和选中状态
+        $table_content.on('change', function (ev) {
+            const target = ev.target;
+
+            // 若改变选中状态
+            if (target.className === 'select-this-btn') {
+                setCheckedAllStatus();
+                getTotalPrices();
+            }
+
+            // 若修改商品数量
+            if (target.className === 'table-content-count') {
+                const $target = $(target),
+                    $prevPrice = $target.parent().prev(),
+                    $nextTotal = $target.parent().next();
+
+                let total = $target.val() * $prevPrice.html();
+
+                $nextTotal.html(total)
+
+                getTotalPrices();
+            }
+        });
+
+        // 删除商品
+        $table_content.on('click', function (ev) {
+            const $target = $(ev.target);
+                        
+            if ($target.hasClass('delete-this-btn')) {
+                $target.parent().parent().remove();
+                getTotalPrices();
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>拼多多-top</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
+
+        .common-header{
+            /* position: fixed; */
+        }
+        .common-header-nav {
+            
+            /* position: relative; */
+            white-space: nowrap;
+            overflow: auto;
+        }
+
+        .header-nav-item {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+
+        .header-nav-item:hover {
+            border-bottom: 4px solid red;
+        }
+
+        .header-nav-item:active {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="common-header">
+        <nav class="common-header-nav" id="nav">
+            <a href="#" class="header-nav-item">首页</a>
+            <a href="#" class="header-nav-item">服饰</a>
+            <a href="#" class="header-nav-item">鞋包</a>
+            <a href="#" class="header-nav-item">母婴</a>
+            <a href="#" class="header-nav-item">百货</a>
+            <a href="#" class="header-nav-item">食品</a>
+            <a href="#" class="header-nav-item">内衣</a>
+            <a href="#" class="header-nav-item">男装</a>
+            <a href="#" class="header-nav-item">电器</a>
+            <a href="#" class="header-nav-item">水果</a>
+            <a href="#" class="header-nav-item">家装</a>
+            <a href="#" class="header-nav-item">家纺</a>
+            <a href="#" class="header-nav-item">手机</a>
+            <a href="#" class="header-nav-item">美妆</a>
+            <a href="#" class="header-nav-item">运动</a>
+            <a href="#" class="header-nav-item">汽车</a>
+        </nav>
+    </header>
+
+
+    <script>
+        const NAV = document.getElementById('nav');
+
+        NAV.addEventListener('click', function (ev) {
+            const target = ev.target;
+            const pageX = ev.pageX;
+
+            this.offsetLeft = this.offsetLeft + 100 + 'px';
+            // window.getComputedStyle(this)
+            console.log(this.offsetLeft)
+        }, false);
+    </script>
+</body>
+
+</html>
