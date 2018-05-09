@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>滚动切换</title>
+    <link href="https://cdn.bootcss.com/minireset.css/0.0.2/minireset.css" rel="stylesheet">
+    <style>
+        body {
+            color: azure;
+            background-color: #666;
+        }
+
+        .header-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            text-align: center;
+            color: black;
+            background-color: #fff;
+            font-size: .8125rem;
+            font-weight: 500;
+            transition: all 1000ms ease-in-out;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 516px;
+            height: 45px;
+            /* box-sizing: border-box; */
+        }
+
+        .header-nav-item {
+            display: block;
+            color: black;
+            text-decoration: none;
+            height: 45px;
+            line-height: 45px;
+            padding: 0 15px;
+            box-sizing: border-box;
+
+            /* transition: all 500ms; */
+        }
+
+        .header-nav-item:hover {
+            border-top: 2px solid red;
+            border-bottom: 2px solid red;
+        }
+
+        /* main-content */
+
+        body,
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .main-wrap,
+        .main-section {
+            height: 100%;
+        }
+        
+        .active{
+            animation:myfirst 5s;
+        }
+        
+        @keyframes myfirst {
+            /*创建动画，使用@keyframes规则*/
+            from {
+                background: red;
+            }
+            to {
+                background: yellow;
+            }
+            /*将背景颜色从red改为yellow，时间长度在外部定义*/
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header-wrap">
+        <nav class="header-nav">
+            <a href="#2" class="header-nav-item" data-index="0">优秀站点</a>
+            <a href="#3" class="header-nav-item" data-index="1">前端合辑</a>
+            <a href="#4" class="header-nav-item" data-index="2">设计体验</a>
+            <a href="#5" class="header-nav-item" data-index="3">工具文档</a>
+            <a href="#6" class="header-nav-item" data-index="4">技术文章</a>
+            <a href="#7" class="header-nav-item" data-index="5">收录信息</a>
+        </nav>
+    </header>
+
+    <main class="main-wrap">
+        <section class="main-section" style="background-color: seashell;">
+            <h3 class="main-section-title">优秀站点</h3>
+            <div class="main-section-content">1</div>
+        </section>
+        <section class="main-section" style="background-color: darkcyan;">
+            <h3 class="main-section-title">前端合辑</h3>
+            <div class="main-section-content">2</div>
+        </section>
+        <section class="main-section" style="background-color: burlywood;">
+            <h3 class="main-section-title">设计体验</h3>
+            <div class="main-section-content">3</div>
+        </section>
+        <section class="main-section" style="background-color: green;">
+            <h3 class="main-section-title">工具文档</h3>
+            <div class="main-section-content">4</div>
+        </section>
+        <section class="main-section" style="background-color: red;">
+            <h3 class="main-section-title">技术文章</h3>
+            <div class="main-section-content">5</div>
+        </section>
+        <section class="main-section" style="background-color: blue;">
+            <h3 class="main-section-title">收录信息</h3>
+            <div class="main-section-content">6</div>
+        </section>
+    </main>
+
+
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        const RollScreen = (function () {
+            const $header_nav = $('.header-nav');
+
+            // 获取显示模块的数量
+            const $section = $('.main-section'),
+                section_length = $section.length;
+
+            let current_index = 0;
+
+            const $body = $('body');
+
+            // 设置定时器flag
+            let timer = null,
+                delay = 1000;
+
+            // 滚动窗口函数
+            function rollScreenHandler(target, position, speed = 800, easing, fn) {
+                target.animate({
+                    scrollTop: position
+                }, speed, easing, fn);
+            }
+
+            // 绑定点击跳转
+            function bindMouseNavigator(ev) {
+                let target = ev.target;
+                let index = target.dataset.index;
+
+                $body.stop(true, true);
+
+                rollScreenHandler($body, $body.outerHeight(true) * index);
+            }
+
+            // 绑定滚滚屏
+            function bindMouseScroll(ev) {
+                // 阻止屏幕滚动
+                ev.preventDefault();
+
+                // 判断鼠标向上滚动还是向下滚动
+                let delta = -ev.originalEvent.wheelDelta || ev.originalEvent.detail;
+
+                if (delta > 0) {
+                    // 如果定时器flag存在，则阻止滚动
+                    if (timer) return;
+
+                    if (current_index < section_length - 1) {
+                        current_index++;
+                    }
+
+                    rollScreenHandler($body, $body.outerHeight(true) * current_index);
+
+                    timer = setTimeout(() => {
+                        timer = null;
+                    }, delay);
+                } else {
+                    // 如果定时器flag存在，则阻止滚动
+                    if (timer) return;
+
+                    if (current_index > 0) {
+                        current_index--;
+                    }
+
+                    rollScreenHandler($body, $body.outerHeight(true) * current_index);
+
+                    timer = setTimeout(() => {
+                        timer = null;
+                    }, delay);
+                }
+            }
+
+
+            // 初始化
+            function init() {
+                // 绑定滚轮事件
+                $body.on('mousewheel DOMMouseScroll', bindMouseScroll);
+
+                // 点击跳转
+                $header_nav.on('click', bindMouseNavigator);
+            }
+            return {
+                init
+            }
+        })();
+
+
+        $(function () {
+            RollScreen.init()
+        })
+    </script>
+</body>
+
+</html>
