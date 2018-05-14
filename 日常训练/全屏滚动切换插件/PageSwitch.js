@@ -28,26 +28,26 @@
       //说明：初始化插件
       //实现：初始化dom结构，布局，分页及绑定事件
       init: function () {
-        var me = this;
-        me.selectors = me.settings.selectors;
-        me.sections = me.element.find(me.selectors.sections);
-        me.section = me.sections.find(me.selectors.section);
+        var self = this;
+        self.selectors = self.settings.selectors;
+        self.sections = self.element.find(self.selectors.sections);
+        self.section = self.sections.find(self.selectors.section);
 
-        me.direction = me.settings.direction == "vertical" ? true : false;
-        me.pagesCount = me.pagesCount();
-        me.index = (me.settings.index >= 0 && me.settings.index < me.pagesCount) ? me.settings.index : 0;
+        self.direction = self.settings.direction == "vertical" ? true : false;
+        self.pagesCount = self.pagesCount();
+        self.index = (self.settings.index >= 0 && self.settings.index < self.pagesCount) ? self.settings.index : 0;
 
-        me.canscroll = true;
+        self.canscroll = true;
 
-        if (!me.direction || me.index) {
-          me._initLayout();
+        if (!self.direction || self.index) {
+          self._initLayout();
         }
 
-        if (me.settings.pagination) {
-          me._initPaging();
+        if (self.settings.pagination) {
+          self._initPaging();
         }
-
-        me._initEvent();
+        
+        self._initEvent();
       },
 
       //说明：获取滑动页面数量
@@ -62,58 +62,58 @@
 
       //说明：向前滑动即上一页
       prve: function () {
-        var me = this;
-        if (me.index > 0) {
-          me.index--;
-        } else if (me.settings.loop) {
-          me.index = me.pagesCount - 1;
+        var self = this;
+        if (self.index > 0) {
+          self.index--;
+        } else if (self.settings.loop) {
+          self.index = self.pagesCount - 1;
         }
-        me._scrollPage();
+        self._scrollPage();
       },
 
       //说明：向后滑动即下一页
       next: function () {
-        var me = this;
-        if (me.index < me.pagesCount) {
-          me.index++;
-        } else if (me.settings.loop) {
-          me.index = 0;
+        var self = this;
+        if (self.index < self.pagesCount) {
+          self.index++;
+        } else if (self.settings.loop) {
+          self.index = 0;
         }
-        me._scrollPage();
+        self._scrollPage();
       },
 
       //说明：主要针对横屏情况进行页面布局
       _initLayout: function () {
-        var me = this;
-        if (!me.direction) {
-          var width = (me.pagesCount * 100) + "%",
-            cellWidth = (100 / me.pagesCount).toFixed(2) + "%";
-          me.sections.width(width);
-          me.section.width(cellWidth).css("float", "left");
+        var self = this;
+        if (!self.direction) {
+          var width = (self.pagesCount * 100) + "%",
+            cellWidth = (100 / self.pagesCount).toFixed(2) + "%";
+          self.sections.width(width);
+          self.section.width(cellWidth).css("float", "left");
         }
-        if (me.index) {
-          me._scrollPage(true);
+        if (self.index) {
+          self._scrollPage(true);
         }
       },
 
       //说明：主要针对横屏情况进行页面布局
       _initPaging: function () {
-        var me = this;
-        var pagesClass = me.selectors.page.substring(1);
-        me.activeClass = me.selectors.active.substring(1);
+        var self = this;
+        var pagesClass = self.selectors.page.substring(1);
+        self.activeClass = self.selectors.active.substring(1);
 
         //var pageHtml = "<ul class=" + pagesClass + ">";
         var pageHtml = `<ul class=${pagesClass}>`;
-        for (var i = 0; i < me.pagesCount; i++) {
+        for (var i = 0; i < self.pagesCount; i++) {
           pageHtml += `<li></li>`;
         }
         pageHtml += "</ul>";
-        me.element.append(pageHtml);
-        var pages = me.element.find(me.selectors.page);
-        me.pageItem = pages.find("li");
-        me.pageItem.eq(me.index).addClass(me.activeClass);
+        self.element.append(pageHtml);
+        var pages = self.element.find(self.selectors.page);
+        self.pageItem = pages.find("li");
+        self.pageItem.eq(self.index).addClass(self.activeClass);
 
-        if (me.direction) {
+        if (self.direction) {
           pages.addClass("vertical");
         } else {
           pages.addClass("horizontal");
@@ -122,35 +122,35 @@
 
       //说明：初始化插件事件
       _initEvent: function () {
-        var me = this;
+        var self = this;
 
         //绑定分页click事件
-        me.element.on("click", me.selectors.page + " li", function () {
-          me.index = $(this).index();
-          me._scrollPage();
+        self.element.on("click", self.selectors.page + " li", function () {
+          self.index = $(this).index();
+          self._scrollPage();
         });
 
         //绑定鼠标滚轮事件
-        me.element.on("mousewheel DOMMouseScroll", function (e) {
+        self.element.on("mousewheel DOMMouseScroll", function (e) {
           e.preventDefault();
           var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail;
-          if (me.canscroll) {
-            if (delta > 0 && (me.index && !me.settings.loop || me.settings.loop)) {
-              me.prve();
-            } else if (delta < 0 && (me.index < (me.pagesCount - 1) && !me.settings.loop || me.settings.loop)) {
-              me.next();
+          if (self.canscroll) {
+            if (delta > 0 && (self.index && !self.settings.loop || self.settings.loop)) {
+              self.prve();
+            } else if (delta < 0 && (self.index < (self.pagesCount - 1) && !self.settings.loop || self.settings.loop)) {
+              self.next();
             }
           }
         });
 
         //绑定键盘事件
-        if (me.settings.keyboard) {
+        if (self.settings.keyboard) {
           $(window).keydown(function (e) {
             var keyCode = e.keyCode;
             if (keyCode == 37 || keyCode == 38) {
-              me.prve();
+              self.prve();
             } else if (keyCode == 39 || keyCode == 40) {
-              me.next();
+              self.next();
             }
           });
         }
@@ -161,23 +161,23 @@
         $(window).resize(function () {
           clearTimeout(resizeId);
           resizeId = setTimeout(function () {
-            var currentLength = me.switchLength();
-            var offset = me.settings.direction ? me.section.eq(me.index).offset().top : me.section.eq(me.index).offset().left;
-            if (Math.abs(offset) > currentLength / 2 && me.index < (me.pagesCount - 1)) {
-              me.index++;
+            var currentLength = self.switchLength();
+            var offset = self.settings.direction ? self.section.eq(self.index).offset().top : self.section.eq(self.index).offset().left;
+            if (Math.abs(offset) > currentLength / 2 && self.index < (self.pagesCount - 1)) {
+              self.index++;
             }
-            if (me.index) {
-              me._scrollPage();
+            if (self.index) {
+              self._scrollPage();
             }
           }, 500);
         });
 
         //支持CSS3动画的浏览器，绑定transitionend事件(即在动画结束后调用起回调函数)
         if (_prefix) {
-          me.sections.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend", function () {
-            me.canscroll = true;
-            if (me.settings.callback && $.type(me.settings.callback) === "function") {
-              me.settings.callback();
+          self.sections.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend", function () {
+            self.canscroll = true;
+            if (self.settings.callback && $.type(self.settings.callback) === "function") {
+              self.settings.callback();
             }
           })
         }
@@ -185,31 +185,31 @@
 
       //滑动动画
       _scrollPage: function (init) {
-        var me = this;
-        var dest = me.section.eq(me.index).position();
+        var self = this;
+        var dest = self.section.eq(self.index).position();
         if (!dest) return;
 
-        me.canscroll = false;
+        self.canscroll = false;
         if (_prefix) {
-          //var translate = me.direction ? "translateY(-" + dest.top + "px)" : "translateX(-" + dest.left + "px)";
-          var translate = me.direction ? `translateY(-${dest.top}px)` : `translateX(-${dest.left}px)`;
-          me.sections.css(_prefix + "transition", "all " + me.settings.duration + "ms " + me.settings.easing);
-          me.sections.css(_prefix + "transform", translate);
+          //var translate = self.direction ? "translateY(-" + dest.top + "px)" : "translateX(-" + dest.left + "px)";
+          var translate = self.direction ? `translateY(-${dest.top}px)` : `translateX(-${dest.left}px)`;
+          self.sections.css(_prefix + "transition", "all " + self.settings.duration + "ms " + self.settings.easing);
+          self.sections.css(_prefix + "transform", translate);
         } else {
-          var animateCss = me.direction ? {
+          var animateCss = self.direction ? {
             top: -dest.top
           } : {
             left: -dest.left
           };
-          me.sections.animate(animateCss, me.settings.duration, function () {
-            me.canscroll = true;
-            if (me.settings.callback) {
-              me.settings.callback();
+          self.sections.animate(animateCss, self.settings.duration, function () {
+            self.canscroll = true;
+            if (self.settings.callback) {
+              self.settings.callback();
             }
           });
         }
-        if (me.settings.pagination && !init) {
-          me.pageItem.eq(me.index).addClass(me.activeClass).siblings("li").removeClass(me.activeClass);
+        if (self.settings.pagination && !init) {
+          self.pageItem.eq(self.index).addClass(self.activeClass).siblings("li").removeClass(self.activeClass);
         }
       }
     };
@@ -218,11 +218,11 @@
 
   $.fn.PageSwitch = function (options) {
     return this.each(function () {
-      var me = $(this),
-        instance = me.data("PageSwitch");
+      var self = $(this),
+        instance = self.data("PageSwitch");
 
       if (!instance) {
-        me.data("PageSwitch", (instance = new PageSwitch(me, options)));
+        self.data("PageSwitch", (instance = new PageSwitch(self, options)));
       }
 
       if ($.type(options) === "string") return instance[options]();

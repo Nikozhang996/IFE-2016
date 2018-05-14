@@ -1,13 +1,12 @@
 (function ($) {
   /* 添加浏览器前缀 */
   var _prefix = (function (temp) {
-    var aPrefix = ['webkit', 'Moz', 'o', 'ms'],
-      props = '';
-
-    for (var i = 0; i < aPrefix.length; i++) {
-      props = aPrefix[i] + 'Transition';
+    var aPrefix = ["webkit", "Moz", "o", "ms"];
+    var props = "";
+    for (var i in aPrefix) {
+      props = aPrefix[i] + "Transition";
       if (temp.style[props] !== undefined) {
-        return '-' + aPrefix[i].toLowerCase() + '-';
+        return "-" + aPrefix[i].toLowerCase() + "-";
       }
     }
     return false;
@@ -29,8 +28,8 @@
         self.sections = self.element.find(self.selectors.sections);
         self.section = self.sections.find(self.selectors.section);
 
-        self.direction = self.settings.direction == 'vertical' ? true : false;
-        self.pagesCount = self.settings.pagesCount;
+        self.direction = self.settings.direction == "vertical" ? true : false;
+        self.pagesCount = self.pagesCount();
 
         self.index = (self.settings.index >= 0 && self.settings.index < self.pagesCount) ?
           self.settings.index :
@@ -59,35 +58,32 @@
         return this.direction == 1 ? this.element.height() : this.element.width();
       },
 
-      /* 向前滑动一页 */
-      prev: function () {
+      //说明：向前滑动即上一页
+      prve: function () {
         var self = this;
-        if (this.index > 0) {
-          this.index--;
-        } else if (this.settings.loop) {
-          this.index = this.pagesCount - 1
+        if (self.index > 0) {
+          self.index--;
+        } else if (self.settings.loop) {
+          self.index = self.pagesCount - 1;
         }
-        this._scrollPage();
-
-        console.log('prev', this.index);
+        self._scrollPage();
       },
 
-      /* 向下滑动一页 */
+      //说明：向后滑动即下一页
       next: function () {
         var self = this;
-        if (this.index < this.pagesCount) {
-          this.index++;
-        } else if (this.settings.loop) {
-          this.index = 0;
+        if (self.index < self.pagesCount) {
+          self.index++;
+        } else if (self.settings.loop) {
+          self.index = 0;
         }
-        this._scrollPage();
-
-        console.log('next', this.index);
+        self._scrollPage();
       },
+
 
       /* 针对横屏情况进行页面布局 */
       _initLayout: function () {
-        var me = this;
+        var self = this;
         if (!this.direction) {
           var width = (this.pagesCount * 100) + "%",
             cellWidth = (100 / this.pagesCount).toFixed(2) + "%";
@@ -101,7 +97,6 @@
 
       /* 实现分页的DOM结构和CSS样式 */
       _initPaging: function () {
-        var self = this;
         var pagesClass = this.selectors.page.substring(1);
         this.activeClass = this.selectors.active.substring(1);
 
@@ -122,8 +117,6 @@
         } else if (this.settings.pagination) {
           pages.addClass('horizontal');
         }
-
-        // this._initEvent();
       },
 
       /* 初始化插件事件 */
@@ -142,13 +135,9 @@
             var delta = ev.originalEvent.wheelDelta || -ev.originalEvent.detail;
 
             if (delta > 0 && (self.index && !self.settings.loop || self.settings.loop)) {
-              console.log(delta);
-
-              self.prev();
+              self.prve();
             } else if (delta < 0 && (self.index < (self.pagesCount - 1) && !self.settings.loop || self.settings
                 .loop)) {
-              console.log(delta);
-
               self.next();
             }
           }
@@ -159,7 +148,7 @@
           $(window).on('keydown', function (ev) {
             var keyCode = ev.keyCode;
             if (keyCode == 37 || keyCode == 38) {
-              self.prev();
+              self.prve();
             } else if (keyCode == 39 || keyCode == 40) {
               self.next();
             }
@@ -197,31 +186,30 @@
 
       /* 滑动动画 */
       _scrollPage: function (init) {
-        var me = this;
-        var dest = me.section.eq(me.index).position();
+        var dest = this.section.eq(this.index).position();
         if (!dest) return;
 
-        me.canscroll = false;
+        this.canscroll = false;
         if (_prefix) {
-          //var translate = me.direction ? "translateY(-" + dest.top + "px)" : "translateX(-" + dest.left + "px)";
-          var translate = me.direction ? `translateY(-${dest.top}px)` : `translateX(-${dest.left}px)`;
-          me.sections.css(_prefix + "transition", "all " + me.settings.duration + "ms " + me.settings.easing);
-          me.sections.css(_prefix + "transform", translate);
+          //var translate = this.direction ? "translateY(-" + dest.top + "px)" : "translateX(-" + dest.left + "px)";
+          var translate = this.direction ? `translateY(-${dest.top}px)` : `translateX(-${dest.left}px)`;
+          this.sections.css(_prefix + "transition", "all " + this.settings.duration + "ms " + this.settings.easing);
+          this.sections.css(_prefix + "transform", translate);
         } else {
-          var animateCss = me.direction ? {
+          var animateCss = this.direction ? {
             top: -dest.top
           } : {
             left: -dest.left
           };
-          me.sections.animate(animateCss, me.settings.duration, function () {
-            me.canscroll = true;
-            if (me.settings.callback) {
-              me.settings.callback();
+          this.sections.animate(animateCss, this.settings.duration, function () {
+            this.canscroll = true;
+            if (this.settings.callback) {
+              this.settings.callback();
             }
           });
         }
-        if (me.settings.pagination && !init) {
-          me.pageItem.eq(me.index).addClass(me.activeClass).siblings("li").removeClass(me.activeClass);
+        if (this.settings.pagination && !init) {
+          this.pageItem.eq(this.index).addClass(this.activeClass).siblings("li").removeClass(this.activeClass);
         }
       }
     };
@@ -230,11 +218,11 @@
 
   $.fn.PageSwitch = function (options) {
     return this.each(function () {
-      var me = $(this),
-        instance = me.data("PageSwitch");
+      var self = $(this),
+        instance = self.data("PageSwitch");
 
       if (!instance) {
-        me.data("PageSwitch", (instance = new PageSwitch(me, options)));
+        self.data("PageSwitch", (instance = new PageSwitch(self, options)));
       }
 
       if ($.type(options) === "string") return instance[options]();
