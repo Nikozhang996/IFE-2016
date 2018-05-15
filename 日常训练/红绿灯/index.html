@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>红绿灯</title>
+  <style>
+    #traffic>li {
+      display: block;
+    }
+
+    #traffic span {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background-color: gray;
+      margin: 5px;
+      border-radius: 50%;
+    }
+
+    #traffic.stop li:nth-child(1) span {
+      background-color: red;
+    }
+
+    #traffic.wait li:nth-child(2) span {
+      background-color: yellow;
+    }
+
+    #traffic.pass li:nth-child(3) span {
+      background-color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <ul id="traffic" class="wait">
+    <li>
+      <span></span>
+    </li>
+    <li>
+      <span></span>
+    </li>
+    <li>
+      <span></span>
+    </li>
+  </ul>
+</body>
+<script>
+  const traffic = document.getElementById('traffic');
+
+  (function reset() {
+    traffic.className = 'wait';
+    setTimeout(() => {
+      traffic.className = 'stop'
+      setTimeout(() => {
+        traffic.className = 'pass'
+        setTimeout(() => {
+          traffic.className = 'wait'
+          setTimeout(reset, 2000);
+        }, 2000);
+      }, 2000);
+    }, 2000);
+  })
+
+  /* 
+  版本1
+  问题：代表耦合度严重，没有扩展性，并且出现地狱回调问题
+   */
+</script>
+
+<script>
+  (function () {
+    const stateList = ['wait', 'stop', 'pass'];
+
+    let currentStateIndex = 0;
+
+    setInterval(function () {
+      let state = stateList[currentStateIndex];
+      traffic.className = state;
+
+      // 取余即可
+      currentStateIndex = (currentStateIndex + 1) % stateList.length;
+    }, 2000);
+  })
+
+  /* 
+  版本2
+  通过全局数组代理，切换全局状态，通过改变状态控制CSS
+  */
+</script>
+
+<script>
+  function start(target, stateList, duration) {
+    let currentStateIndex = 0;
+
+    setInterval(function () {
+      let state = stateList[currentStateIndex];
+      target.className = state;
+      currentStateIndex = (currentStateIndex + 1) % stateList.length;
+    }, duration);
+  }
+
+  // start(traffic, ['stop','wait', 'pass'], 1000);
+  /* 
+  版本3
+  问题：可复用性差
+  */
+</script>
+
+</html>
