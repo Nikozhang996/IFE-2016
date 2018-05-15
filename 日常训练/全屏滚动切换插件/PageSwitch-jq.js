@@ -23,7 +23,7 @@
   */
   var PageSwitch = (function () {
     function PageSwitch(element, options) {
-      // 通过内置类获取插件
+      // 定义默认配置还是手动配置
       this.settings = $.extend(true, $.fn.PageSwitch.defaults, options || {});
 
       // 当前容器元素
@@ -214,8 +214,6 @@
         if (!dest) return;
 
         this.isScrolling = false;
-
-        console.log(dest);
         
         // 如果支持css3动画则使用transition，否则用animate动画
         if (_prefix) {
@@ -245,9 +243,9 @@
   })();
 
   $.fn.PageSwitch = function (options) {
-    console.log(this);
-    
     return this.each(function () {
+      console.log(this);
+      
       var self = $(this),
         instance = self.data("PageSwitch");
 
@@ -257,8 +255,8 @@
 
       if ($.type(options) === "string") return instance[options]();
     });
-
   }
+  
   $.fn.PageSwitch.defaults = {
     selectors: {
       sections: ".sections",
@@ -278,7 +276,7 @@
 
 
   $(function () {
-    $('[data-PageSwitch]').PageSwitch();
+    // $('[data-PageSwitch]').PageSwitch();
   })
 
 })(jQuery);

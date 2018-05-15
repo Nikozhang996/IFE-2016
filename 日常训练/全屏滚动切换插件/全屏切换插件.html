@@ -86,9 +86,11 @@
 
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 <!-- <script src="./PageSwitch.js"></script> -->
-<script src="./PageSwitch-first.js"></script>
+<!-- <script src="./PageSwitch-jq.js"></script> -->
+<script src="./PageSwitch-es6.js"></script>
 
 <script>
+  /* 
   $('#container').PageSwitch({
     index: 0, //页面开始的索引
     duration: 1000, //动画执行时间
@@ -97,10 +99,24 @@
     keyboard: true, //是否触发键盘事件
     // direction: "vertical", //滑动方向vertical,horizontal
     direction: "horizontal", //滑动方向vertical,horizontal
-    callback: function () {
-      // console.log(this.direction);
-    }
+    callback: function () {}
   });
+  
+  */
+
+
+  let pageSwitch = new PageSwitch({
+    selectors: {
+
+    },
+    index: 0, //页面开始的索引
+    duration: 1000, //动画执行时间
+    loop: false, //是否循环切换
+    pagination: false, //是否进行分页
+    keyboard: true, //是否触发键盘事件
+    direction: "vertical", //滑动方向vertical,horizontal
+    callback: function () {}
+  })
 </script>
 
 </html>
