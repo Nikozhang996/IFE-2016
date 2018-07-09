@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>全屏切换</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #container,
+    .sections,
+    .section {
+      height: 100%;
+    }
+
+    #section0,
+    #section1,
+    #section2,
+    #section3 {
+      background-color: #000;
+      background-size: cover;
+      background-position: 50% 50%;
+      text-align: center;
+      color: aliceblue;
+    }
+
+    #section0 {
+      background-color: red;
+    }
+
+    #section1 {
+      background-color: green;
+    }
+
+    #section2 {
+      background-color: blue;
+    }
+
+    #section3 {
+      background-color: yellow;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container" data-PageSwitch>
+    <div class="sections">
+      <div class="section" id="section0">
+        <h3>this is the page1</h3>
+      </div>
+      <div class="section" id="section1">
+        <h3>this is the page2</h3>
+      </div>
+      <div class="section" id="section2">
+        <h3>this is the page3</h3>
+      </div>
+      <div class="section" id="section3">
+        <h3>this is the page4</h3>
+      </div>
+      <div class="section" id="section4">
+        <h3>this is the page5</h3>
+      </div>
+      <div class="section" id="section5">
+        <h3>this is the page6</h3>
+      </div>
+      <div class="section" id="section6">
+        <h3>this is the page7</h3>
+      </div>
+      <div class="section" id="section7">
+        <h3>this is the page8</h3>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<!-- <script src="./PageSwitch.js"></script> -->
+<!-- <script src="./PageSwitch-jq.js"></script> -->
+<script src="./PageSwitch-es6.js"></script>
+
+<script>
+  /* 
+  $('#container').PageSwitch({
+    index: 0, //页面开始的索引
+    duration: 1000, //动画执行时间
+    loop: false, //是否循环切换
+    pagination: false, //是否进行分页
+    keyboard: true, //是否触发键盘事件
+    // direction: "vertical", //滑动方向vertical,horizontal
+    direction: "horizontal", //滑动方向vertical,horizontal
+    callback: function () {}
+  });
+  
+  */
+
+
+  let pageSwitch = new PageSwitch({
+    selectors: {
+
+    },
+    index: 0, //页面开始的索引
+    duration: 1000, //动画执行时间
+    loop: false, //是否循环切换
+    pagination: false, //是否进行分页
+    keyboard: true, //是否触发键盘事件
+    direction: "vertical", //滑动方向vertical,horizontal
+    callback: function () {}
+  })
+</script>
+
+</html>

@@ -108,27 +108,36 @@ asyncReadFile().then(data => {
     console.log(data);
 }) */
 
-let count = 0;
+// let count = 0;
 const settimeout = function (duration) {
     return new Promise((res, rej) => {
-        setTimeout(() => {
-            res()
-        }, duration);
+        setTimeout(res, duration);
     })
 }
 
+settimeout.count = 0;
 // 使用迭代器
-function* fn() {
-    yield settimeout(1000);
-    yield settimeout(1000);
-    yield settimeout(1000);
+/* function* fn() {
+    yield settimeout(1000).then(() => {
+        console.log(++count);
+    })
+    yield settimeout(1000).then(() => {
+        console.log(++count);
+    })
+    yield settimeout(1000).then(() => {
+        console.log(++count);
+    })
 }
 
 let timer = fn();
-for (const item of timer) {
+timer.next().value;
+timer.next().value;
+timer.next().value; */
+
+/* for (const item of timer) {
     item.then(() => console.log(++count));
 }
-
+ */
 
 // 使用async优化
 /* async function asyncTimer() {
@@ -147,18 +156,22 @@ asyncTimer().then(data => console.log(data)); */
 
 
 // 使用Promise优化
-/* settimeout(1000)
+settimeout(1000)
     .then(() => {
-        console.log(++count);
+        console.log(++settimeout.count);
         return settimeout(1000);
     })
     .then(() => {
-        console.log(++count);
+        console.log(++settimeout.count);
         return settimeout(1000);
     })
     .then(() => {
-        console.log(++count);
-    }) */
+        console.log(++settimeout.count);
+        return 'success'
+    })
+    .then(data => {
+        console.log(this + data);
+    })
 
 
 

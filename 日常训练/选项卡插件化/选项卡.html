@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>选项卡插件</title>
+    <style>
+        body {
+            color: #ddd;
+            background-color: #666;
+        }
+
+        ul {
+        }
+
+        ul > li {
+            display: inline-block;
+            width: 100px;
+            height: 40px;
+            border: 1px solid red;
+        }
+
+        .content > div {
+            display: none;
+            width: 500px;
+            height: 200px;
+            border: 1px solid red;
+        }
+
+        .select-li {
+            color: #fff;
+            background-color: #ddd;
+        }
+
+        .content > div.select-content {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+<div id="box" class="box">
+    <ul>
+        <li>1</li>
+        <li>1</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <div class="content">
+        <div>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </div>
+        <div>内容2</div>
+        <div>内容3</div>
+        <div>内容4</div>
+    </div>
+</div>
+<div id="pox" class="box">
+    <ul>
+        <li>1</li>
+        <li>1</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <div class="content">
+        <div>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </div>
+        <div>内容2</div>
+        <div>内容3</div>
+        <div>内容4</div>
+    </div>
+</div>
+<div id="bio" class="box">
+    <ul>
+        <li>1</li>
+        <li>1</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <div class="content">
+        <div>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </div>
+        <div>内容2</div>
+        <div>内容3</div>
+        <div>内容4</div>
+    </div>
+</div>
+<script src="./utils.js"></script>
+<script>
+  var div = $.getElementsByClass('box');
+
+  function TabChangePlugin(container, defaultIndex) {
+    return this.init(container, defaultIndex);
+  }
+  TabChangePlugin.prototype = {
+    constructor: TabChangePlugin,
+    // 改变样式
+
+//    flag: null,
+    tabChange: function (elements) {
+      var index = $.index(elements);
+
+      if(this.flag == index) {
+        return;
+      }
+
+      for (var i = 0; i < this.select_li.length; i++) {
+        this.select_div[i][index] = i;
+        $.removeClass(this.select_li[i], 'select-li');
+        $.removeClass(this.select_div[i], 'select-content');
+      }
+      $.addClass(elements, 'select-li');
+      $.addClass(this.select_div[index], 'select-content');
+
+      this.flag = index;
+    },
+    // 默认添加样式方法
+    defaultSelectAttr: function () {
+      $.addClass(this.select_li[this.defaultIndex], 'select-li');
+      $.addClass(this.select_div[this.defaultIndex], 'select-content');
+    },
+    // 绑定事件
+    bindEventHandler: function () {
+      var _this = this;
+      $.addEventHandler(this.content_ul, 'click', function (event) {
+        var target = event.target || event.srcElement;
+        if (target.tagName === 'LI') {
+          _this.tabChange(target);
+        }
+      }, false)
+    },
+    // 初始化
+    init: function (container, defaultIndex) {
+      this.container = container || null;
+      this.defaultIndex = defaultIndex || 0;
+      this.content_ul = $.firstChild(this.container);
+      this.content_div = $.lastChild(this.container);
+      this.select_li = $.children(this.content_ul);
+      this.select_div = $.children(this.content_div);
+      this.flag = this.defaultIndex;
+      this.defaultSelectAttr();
+      this.bindEventHandler();
+      return this;
+    }
+  }
+
+  var box = document.getElementById('box');
+  var box1 = new TabChangePlugin(box)
+
+  var pox = document.getElementById('pox');
+  var pox1 = new TabChangePlugin(pox,2)
+
+</script>
+</body>
+
+</html>
