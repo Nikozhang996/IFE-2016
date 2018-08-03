@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>函数节流与防抖</title>
+    <style>
+        body {
+            color: #fff;
+            background-color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <span id='flag'>0</span>
+
+
+
+
+
+
+
+    <script>
+        const $flag = document.querySelector('#flag');
+
+        let flag = 1;
+
+        function testFunc() {
+            $flag.innerHTML = flag++;
+        }
+        document.documentElement.addEventListener('mousemove', function (ev) {
+            fn()
+        }, false);
+
+        let fn = debounce(testFunc, 1000)
+
+        /* 函数节流 */
+        function debounce(func, wait, immediate) {
+            let timeout, args, context, timestamp, result;
+
+            const later = function () {
+                // 据上一次触发时间间隔
+                let last = new Date().getTime() - timestamp;
+
+                // 上次被包装函数被调用时间间隔last小于设定时间间隔wait，
+                if (last < wait && last > 0) {
+                    timeout = setTimeout(later, wait - last);
+                } else {
+                    timeout = null;
+                    if (!immediate) {
+                        result = func.apply(context, args);
+                        if (!timeout) context = args = null;
+                    }
+                }
+            };
+
+            return function name(params) {
+                context = this;
+                args = arguments;
+                timestamp = new Date().getTime();
+                let callNow = immediate && !timeout;
+                // 如果延时不存在，重新设定延时
+                if (!timeout) timeout = setTimeout(later, wait);
+                if (callNow) {
+                    result = func.apply(context, args);
+                    context = args = null;
+                }
+                return result;
+            }
+        }
+    </script>
+</body>
+
+</html>
