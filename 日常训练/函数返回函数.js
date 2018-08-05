@@ -34,7 +34,7 @@ let arr = [],
 function isTypeHanlder(param = ['Boolean', 'Number', 'String', 'Array', 'Function', 'Object']) {
     let Type = {};
     param.forEach((item, index) => {
-        Type[`is${item}`] = function (obj) {
+        Type['is' + item] = function (obj) {
             return {}.toString.call(obj);
         }
     });
